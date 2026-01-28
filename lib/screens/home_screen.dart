@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gem_store/screens/user_registration.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -6,7 +7,13 @@ class Home extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text('Gem Store')),
-        body: Center(child: Text('Welcome to the Gem Store!!')),
+        body: Center(child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            UserRegistration()
+          ],
+        )),
       ),
     );
   }

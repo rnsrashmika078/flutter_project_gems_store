@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:gem_store/widget/form_widget.dart';
 
-void main(){
+void main() {
   return runApp(UserRegistration());
 }
 
-class UserRegistration extends StatefulWidget{
+class UserRegistration extends StatefulWidget {
   const UserRegistration({super.key});
   @override
   State<UserRegistration> createState() => _UserRegistration();
 }
-class _UserRegistration extends State<UserRegistration>{
-  //username 
-  //email
-  //password
-  //confirm password
+
+class _UserRegistration extends State<UserRegistration> {
+ 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Registration"),),
-       body: Center(
-        child: Column(
-          children: [Text("Registration Form")],
-        ),
-       ),
-    );
+    return Padding(
+        padding: EdgeInsets.all(22),
+        child: MyForm() );
   }
 }
