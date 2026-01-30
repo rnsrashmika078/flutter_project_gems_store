@@ -1,0 +1,7 @@
+npm i -g firebase-tools
+npm config get prefix
+add this to environment varaibles -> C:\Users\Rashm\AppData\Roaming\npm
+check -> firebase --version
+firebase login
+dart pub global activate flutterfire_cli
+add this to environment variables -> C:\Users\Rashm\AppData\Local\Pub\Cache\bin
