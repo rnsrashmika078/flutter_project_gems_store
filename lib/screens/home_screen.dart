@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gem_store/screens/user_registration.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -12,7 +13,7 @@ class Home extends StatelessWidget {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
-          children: [Text("GEM STORE")],
+          children: [UserRegistration()],
         )),
       ),
     );

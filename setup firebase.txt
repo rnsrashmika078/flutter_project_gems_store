@@ -5,3 +5,7 @@ check -> firebase --version
 firebase login
 dart pub global activate flutterfire_cli
 add this to environment variables -> C:\Users\Rashm\AppData\Local\Pub\Cache\bin
+
+
+<-------------------------------->
+flutter pub add cloud_firestore
