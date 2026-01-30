@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gem_store/widget/form_widget.dart';
+import 'package:gem_store/widgets/form_widget.dart';
 
 void main() {
   return runApp(UserRegistration());

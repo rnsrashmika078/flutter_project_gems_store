@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gem_store/validator/validator.dart';
 
 class MyForm extends StatefulWidget {
+  const MyForm({super.key});
+
   @override
   State<MyForm> createState() => _MyForm();
 }
