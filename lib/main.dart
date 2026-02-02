@@ -56,7 +56,7 @@ class _AuthApp extends State<AuthApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("SUPABASE + FLUTTER")),
+      appBar: AppBar(title: Text("Gem store")),
       body: Center(child: HomeScreen(authUserData: _authUserData)),
     );
   }
