@@ -1,14 +1,19 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/main.dart';
 
-final user = supabase.auth.currentUser;
-
-Future<void> insertData(String userId) async {
+Future<void> insertData(
+  String? user_id,
+  String? email,
+  String? username,
+  String? dp,
+) async {
+  print("USER ID $user_id");
   await supabase.from(dotenv.env['SUPABASE_TABLE']!).upsert({
-    'user_id': user?.id,
-    'email': user?.email,
-    'username': user?.userMetadata?['full_name'] ?? user?.userMetadata?['name'],
-    'dp': user?.userMetadata?['avatar_url'],
+    'user_id': user_id,
+    'email': email,
+    'username': username,
+    'dp': dp,
   }, onConflict: 'user_id');
 }
 

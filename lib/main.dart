@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:superbase_auth/provider/auth_provider.dart';
 import 'package:superbase_auth/screens/home_screen.dart';
 import 'package:superbase_auth/services/supabase_services.dart';
 import 'package:superbase_auth/widgets/custom_app_bar.dart';
@@ -27,14 +28,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AuthApp extends StatefulWidget {
+class AuthApp extends ConsumerStatefulWidget {
   const AuthApp({super.key});
 
   @override
-  State<AuthApp> createState() => _AuthApp();
+  ConsumerState<AuthApp> createState() => _AuthApp();
 }
 
-class _AuthApp extends State<AuthApp> {
+class _AuthApp extends ConsumerState<AuthApp> {
   Map<String, dynamic>? _authUserData;
   @override
   void initState() {
@@ -48,7 +49,13 @@ class _AuthApp extends State<AuthApp> {
       });
 
       if (data.event == AuthChangeEvent.signedIn && user != null) {
-        await insertData(user.id);
+        final localUsername = ref.read(userNameProvider);
+        await insertData(
+          user.id,
+          newUserData?['email'],
+          newUserData?['name'] ?? localUsername,
+          newUserData?['dp'],
+        );
       }
     });
   }
