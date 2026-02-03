@@ -13,10 +13,7 @@ class GemLoginApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // closes debug banner
 
       title: 'Shineora Gems & jewellery (Pvt)Ltd.',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        fontFamily: 'Arial',
-      ),
+      theme: ThemeData(primarySwatch: Colors.teal, fontFamily: 'Arial'),
       home: const LoginPage(),
     );
   }
@@ -38,13 +35,13 @@ class _LoginPageState extends State<LoginPage> {
     String password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all fields")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Login Successful")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Login Successful")));
     }
   }
 
@@ -72,16 +69,11 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Center(
-                    child: Image.asset('Images/Logo.jpg', height: 180),
-                  ),
+                  Center(child: Image.asset('images/Logo.jpg', height: 180)),
                   const SizedBox(height: 10),
                   const Text(
                     "Shineora Gems & jewellery (Pvt)Ltd.",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 30),
                   TextField(
@@ -112,9 +104,10 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text(
                         "LOGIN",
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            backgroundColor: Color.fromARGB(0, 6, 213, 236)),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          backgroundColor: Color.fromARGB(0, 6, 213, 236),
+                        ),
                       ),
                     ),
                   ),
