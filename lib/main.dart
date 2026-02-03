@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:superbase_auth/provider/auth_provider.dart';
+import 'package:superbase_auth/provider/global_provider.dart';
 import 'package:superbase_auth/screens/home_screen.dart';
 import 'package:superbase_auth/services/supabase_services.dart';
 import 'package:superbase_auth/widgets/custom_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:superbase_auth/widgets/custom_drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: AuthApp());
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        fontFamily: 'Poppins',
+      ),
+      home: AuthApp(),
+      debugShowCheckedModeBanner: false,
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
+    );
   }
 }
 
@@ -37,6 +48,7 @@ class AuthApp extends ConsumerStatefulWidget {
 
 class _AuthApp extends ConsumerState<AuthApp> {
   Map<String, dynamic>? _authUserData;
+  String? routeName;
   @override
   void initState() {
     super.initState();
@@ -54,8 +66,13 @@ class _AuthApp extends ConsumerState<AuthApp> {
           user.id,
           newUserData?['email'],
           newUserData?['name'] ?? localUsername,
-          newUserData?['dp'],
+          newUserData?['avatar_url'],
         );
+        ref.read(authUserProvider.notifier).state = {
+          'username': newUserData?['name'] ?? localUsername,
+          'email': newUserData?['email'],
+          'dp': newUserData?['avatar_url'],
+        };
       }
     });
   }
@@ -63,7 +80,8 @@ class _AuthApp extends ConsumerState<AuthApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Gem Store"),
+      drawer: CustomDrawer(),
+      appBar: CustomAppBar(title: "GEM LK"),
       body: Center(child: HomeScreen(authUserData: _authUserData)),
     );
   }

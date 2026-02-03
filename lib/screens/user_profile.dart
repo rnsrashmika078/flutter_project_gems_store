@@ -1,66 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:superbase_auth/main.dart';
-import 'package:superbase_auth/services/supabase_services.dart';
+import 'package:superbase_auth/provider/global_provider.dart';
 
-class Store extends StatelessWidget {
-  const Store({super.key});
+class UserProfile extends StatelessWidget {
+  const UserProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Scaffold(body: StoreBody()));
+    return UserProfileBody();
   }
 }
 
-class StoreBody extends StatefulWidget {
-  const StoreBody({super.key});
+class UserProfileBody extends ConsumerStatefulWidget {
+  const UserProfileBody({super.key});
 
   @override
-  State<StoreBody> createState() => _StoreBody();
+  ConsumerState<UserProfileBody> createState() => _UserProfileBody();
 }
 
-class _StoreBody extends State<StoreBody> {
-  Map<String, dynamic>? _authUserData;
+class _UserProfileBody extends ConsumerState<UserProfileBody> {
+  // Map<String, dynamic>? _authUserData;
   final userId = supabase.auth.currentUser?.id;
   @override
   void initState() {
     super.initState();
-    getMyUserData();
+    // getMyUserData();
   }
 
-  Future<void> getMyUserData() async {
-    final data = await getUserData(userId!);
-    setState(() {
-      _authUserData = data;
-    });
-  }
+  // Future<void> getMyUserData() async {
+  //   final data = await getUserData(userId!);
+  //   setState(() {
+  //     _authUserData = data;
+  //   });
+  // }
 
   final authUser = supabase.auth.currentUser;
   @override
   Widget build(BuildContext context) {
+    final user = ref.read(authUserProvider);
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _authUserData?['dp'] != null
-              ? Image.network(_authUserData?['dp'], width: 100, height: 100)
-              : Image.asset(
-                  "assets/images/google.png",
-                  width: 100,
-                  height: 100,
-                ),
+          user?['email'] != null
+              ? Column(
+                  spacing: 2,
+                  children: [
+                    user?['dp'] != null
+                        ? CircleAvatar(
+                            radius: 34,
+                            backgroundImage: NetworkImage(user?['dp']),
+                          )
+                        : Container(
+                            width: 50,
+                            height: 50,
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              user?['username'][0],
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
 
-          Text(_authUserData?['user_id'].toString() ?? "NO DATA"),
-          Text(_authUserData?['username'] ?? "NO DATA"),
-          Text(_authUserData?['email'] ?? "NO DATA"),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyApp()),
-              );
-            },
-            child: Icon(Icons.arrow_back),
-          ),
+                    Text(
+                      user?['username'],
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text(
+                      user?['email'],
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    
+                  ],
+                )
+              : Column(
+                  children: [
+                    Image.asset("assets/images/user2.png", width: 100),
+                    Text(
+                      "You are not logged in!",
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
         ],
       ),
     );

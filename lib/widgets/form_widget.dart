@@ -5,15 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/main.dart';
-import 'package:superbase_auth/provider/auth_provider.dart';
+import 'package:superbase_auth/provider/global_provider.dart';
 import 'package:superbase_auth/screens/user_profile.dart';
 import 'package:superbase_auth/services/supabase_auth.dart';
-import 'package:superbase_auth/services/supabase_services.dart';
 import 'package:superbase_auth/validator/form_validator.dart';
 import 'package:superbase_auth/widgets/button_widget.dart';
 import 'package:superbase_auth/widgets/custom_text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:uuid/uuid.dart';
 
 class SignUpForm extends ConsumerStatefulWidget {
   const SignUpForm({super.key});
@@ -32,17 +30,21 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
   void submitForm() async {
     if (_formKey.currentState!.validate()) {
       ref.read(userNameProvider.notifier).state = username.text;
-
+      ref.read(authUserProvider.notifier).state = {
+        'username': username,
+        'email': email,
+      };
       await emailSignUp(email.text.trim(), password.text.trim());
       // await insertData(user_id, email.text.trim(), username.text.trim(), null);
       Fluttertoast.showToast(
         msg: "Registration Success!",
         gravity: ToastGravity.BOTTOM,
       );
-      if (!context.mounted) {
+      if (!context.mounted || !mounted) {
         return;
       }
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Store()));
+
+      // Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
     }
   }
 
@@ -57,7 +59,7 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
           children: [
             CustomTextField(
               controller: username,
-              labelText: 'Username',
+              labelText: 'Name',
               hintText: 'Enter username',
               prefixIcon: Icons.email_outlined,
               suffixIcon: Icons.check_circle_outline,
@@ -79,45 +81,30 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
               suffixIcon: Icons.check_circle_outline,
               validator: FormValidator.password,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 5,
-              children: [
-                Text(
-                  "Forgot login details?",
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
-                ),
-                Text(
-                  "Reset",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
             CustomButton(
               backgroundColor: Colors.blue,
               iconSize: 25,
-              buttonText: "Sign in",
+              textColor: Colors.white,
+              buttonText: "Create Account",
               onPressed: submitForm,
             ),
+            Text("OR", style: TextStyle(color: Colors.grey, fontSize: 16)),
             // sign in with google
             CustomButton(
               backgroundColor: Colors.black,
               iconSize: 25,
-              buttonText: "Sign with Google",
+              textColor: Colors.white,
+              buttonText: "Sign in with Google",
               onPressed: () async {
                 if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
                   await nativeGoogleSignIn();
                   if (!context.mounted) {
                     return;
                   }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Store()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => UserProfile()),
+                  // );
                 } else {
                   await supabase.auth.signInWithOAuth(OAuthProvider.google);
                 }

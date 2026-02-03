@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatefulWidget {
   final String? buttonText;
   final Color? backgroundColor;
+  final Color? textColor;
   final String? buttonIcon;
+  final IconData? icon;
   final double? iconSize;
   final VoidCallback? onPressed;
 
   const CustomButton({
     super.key,
     this.buttonText,
+    this.textColor,
     this.onPressed,
     this.backgroundColor,
     this.buttonIcon,
     this.iconSize,
+    this.icon,
   });
 
   @override
@@ -39,11 +43,14 @@ class _CustomButton extends State<CustomButton> {
                   widget.buttonIcon ?? "",
                   width: widget.iconSize ?? 50,
                 )
+              : widget.icon != null
+              ? Icon(widget.icon)
               : null,
+
           Text(
-            widget.buttonText ?? "",
+            widget.buttonText?.toUpperCase() ?? "",
             style: TextStyle(
-              color: Colors.white,
+              color: widget.textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
