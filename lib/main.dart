@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugShowCheckedModeBanner:
+    false; // closes debug banner
     return const MaterialApp(home: AuthApp());
   }
 }
