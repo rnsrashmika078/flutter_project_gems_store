@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:superbase_auth/provider/global_provider.dart';
 import 'package:superbase_auth/screens/home_screen.dart';
+import 'package:superbase_auth/screens/marketplace_screen.dart';
 import 'package:superbase_auth/services/supabase_services.dart';
 import 'package:superbase_auth/widgets/custom_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:superbase_auth/widgets/custom_drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,18 +29,30 @@ class MyApp extends StatelessWidget {
     debugShowCheckedModeBanner:
     false; // closes debug banner
     return const MaterialApp(home: AuthApp());
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        fontFamily: 'Poppins',
+      ),
+      home: AuthApp(),
+      debugShowCheckedModeBanner: false,
+      darkTheme: ThemeData.light(),
+      // themeMode: ThemeMode.system,
+    );
   }
 }
 
-class AuthApp extends StatefulWidget {
+class AuthApp extends ConsumerStatefulWidget {
   const AuthApp({super.key});
 
   @override
-  State<AuthApp> createState() => _AuthApp();
+  ConsumerState<AuthApp> createState() => _AuthApp();
 }
 
-class _AuthApp extends State<AuthApp> {
+class _AuthApp extends ConsumerState<AuthApp> {
   Map<String, dynamic>? _authUserData;
+  String? routeName;
   @override
   void initState() {
     super.initState();
@@ -50,7 +65,18 @@ class _AuthApp extends State<AuthApp> {
       });
 
       if (data.event == AuthChangeEvent.signedIn && user != null) {
-        await insertData(user.id);
+        final localUsername = ref.read(userNameProvider);
+        await insertData(
+          user.id,
+          newUserData?['email'],
+          newUserData?['name'] ?? localUsername,
+          newUserData?['avatar_url'],
+        );
+        ref.read(authUserProvider.notifier).state = {
+          'username': newUserData?['name'] ?? localUsername,
+          'email': newUserData?['email'],
+          'dp': newUserData?['avatar_url'],
+        };
       }
     });
   }
@@ -58,8 +84,10 @@ class _AuthApp extends State<AuthApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Gem Store"),
-      body: Center(child: HomeScreen(authUserData: _authUserData)),
+      drawer: CustomDrawer(),
+      appBar: CustomAppBar(title: "GEM LK"),
+      // body: Center(child: HomeScreen(authUserData: _authUserData)),
+      body: Center(child: SizedBox()),
     );
   }
 }
