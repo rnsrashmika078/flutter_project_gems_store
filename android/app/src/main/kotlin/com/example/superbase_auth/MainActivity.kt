@@ -1,4 +1,4 @@
-package com.example.gem_store
+package com.example.superbase_auth
 
 import io.flutter.embedding.android.FlutterActivity
 

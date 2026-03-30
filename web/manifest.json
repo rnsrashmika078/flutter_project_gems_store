@@ -1,6 +1,6 @@
 {
-    "name": "gem_store",
-    "short_name": "gem_store",
+    "name": "superbase_auth",
+    "short_name": "superbase_auth",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

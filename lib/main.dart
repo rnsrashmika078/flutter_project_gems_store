@@ -1,6 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:gem_store/screens/home_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:superbase_auth/provider/global_provider.dart';
+import 'package:superbase_auth/screens/home_screen.dart';
+import 'package:superbase_auth/screens/marketplace_screen.dart';
+import 'package:superbase_auth/services/supabase_services.dart';
+import 'package:superbase_auth/widgets/custom_app_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:superbase_auth/widgets/custom_drawer.dart';
 
-void main() {
-  runApp(Home());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+  runApp(ProviderScope(child: MyApp()));
+}
+
+final supabase = Supabase.instance.client;
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        fontFamily: 'Poppins',
+      ),
+      home: AuthApp(),
+      debugShowCheckedModeBanner: false,
+      darkTheme: ThemeData.light(),
+      // themeMode: ThemeMode.system,
+    );
+  }
+}
+
+class AuthApp extends ConsumerStatefulWidget {
+  const AuthApp({super.key});
+
+  @override
+  ConsumerState<AuthApp> createState() => _AuthApp();
+}
+
+class _AuthApp extends ConsumerState<AuthApp> {
+  Map<String, dynamic>? _authUserData;
+  String? routeName;
+  @override
+  void initState() {
+    super.initState();
+    if (!mounted) return;
+    supabase.auth.onAuthStateChange.listen((data) async {
+      final user = data.session?.user;
+      final newUserData = data.session?.user.userMetadata;
+      setState(() {
+        _authUserData = newUserData;
+      });
+
+      if (data.event == AuthChangeEvent.signedIn && user != null) {
+        final localUsername = ref.read(userNameProvider);
+        await insertData(
+          user.id,
+          newUserData?['email'],
+          newUserData?['name'] ?? localUsername,
+          newUserData?['avatar_url'],
+        );
+        ref.read(authUserProvider.notifier).state = {
+          'username': newUserData?['name'] ?? localUsername,
+          'email': newUserData?['email'],
+          'dp': newUserData?['avatar_url'],
+        };
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: CustomDrawer(),
+      appBar: CustomAppBar(title: "GEM LK"),
+      // body: Center(child: HomeScreen(authUserData: _authUserData)),
+      body: Center(child: SizedBox()),
+    );
+  }
 }
