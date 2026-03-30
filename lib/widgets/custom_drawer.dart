@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:superbase_auth/main.dart';
 import 'package:superbase_auth/provider/global_provider.dart';
 import 'package:superbase_auth/screens/user_profile.dart';
 import 'package:superbase_auth/services/supabase_auth.dart';
-import 'package:superbase_auth/widgets/button_widget.dart';
 
 class CustomDrawer extends ConsumerStatefulWidget {
   const CustomDrawer({super.key});

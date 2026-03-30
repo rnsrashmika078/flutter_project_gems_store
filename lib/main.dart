@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/provider/global_provider.dart';
 import 'package:superbase_auth/screens/home_screen.dart';
+import 'package:superbase_auth/screens/marketplace_screen.dart';
 import 'package:superbase_auth/services/supabase_services.dart';
 import 'package:superbase_auth/widgets/custom_app_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,8 +34,8 @@ class MyApp extends StatelessWidget {
       ),
       home: AuthApp(),
       debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData.dark(),
-      themeMode: ThemeMode.system,
+      darkTheme: ThemeData.light(),
+      // themeMode: ThemeMode.system,
     );
   }
 }
@@ -82,7 +83,8 @@ class _AuthApp extends ConsumerState<AuthApp> {
     return Scaffold(
       drawer: CustomDrawer(),
       appBar: CustomAppBar(title: "GEM LK"),
-      body: Center(child: HomeScreen(authUserData: _authUserData)),
+      // body: Center(child: HomeScreen(authUserData: _authUserData)),
+      body: Center(child: SizedBox()),
     );
   }
 }

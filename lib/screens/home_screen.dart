@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:superbase_auth/screens/sign_up_screen.dart';
+import 'package:superbase_auth/services/supabase_auth.dart';
 
 class HomeScreen extends StatelessWidget {
   final Map<String, dynamic>? authUserData;
@@ -11,8 +12,8 @@ class HomeScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SignUpScreen(),
-        // Text(authUserData?['name'] ?? "Not Signed in!"),
-        // ElevatedButton(onPressed: signOut, child: Icon(Icons.logout)),
+        Text(authUserData?['name'] ?? "Not Signed in!"),
+        ElevatedButton(onPressed: signOut, child: Icon(Icons.logout)),
       ],
     );
   }

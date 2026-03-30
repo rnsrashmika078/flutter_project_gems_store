@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/main.dart';
 import 'package:superbase_auth/provider/global_provider.dart';
-import 'package:superbase_auth/screens/user_profile.dart';
 import 'package:superbase_auth/services/supabase_auth.dart';
 import 'package:superbase_auth/validator/form_validator.dart';
 import 'package:superbase_auth/widgets/button_widget.dart';

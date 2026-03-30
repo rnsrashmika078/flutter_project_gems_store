@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:superbase_auth/widgets/form_widget.dart';
 
 class SignUpScreen extends StatefulWidget {
