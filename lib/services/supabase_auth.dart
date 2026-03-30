@@ -31,6 +31,26 @@ Future<void> nativeGoogleSignIn() async {
   );
 }
 
+Future<void> emailSignIn(String email, String password) async {
+  final res = await supabase.auth.signInWithPassword(
+    email: email,
+    password: password,
+  );
+
+  final user = res.user;
+  if (user == null) {
+    throw 'failed login.';
+  }
+}
+
+Future<void> emailSignUp(String email, String password) async {
+  final res = await supabase.auth.signUp(email: email, password: password);
+
+  if (res.user == null) {
+    throw 'failed signup.';
+  }
+}
+
 Future<void> signOut() async {
   final webClientId = dotenv.env['WEB_CLIENT_ID'];
   final iosClientId = dotenv.env['IOS_CLIENT_ID'];

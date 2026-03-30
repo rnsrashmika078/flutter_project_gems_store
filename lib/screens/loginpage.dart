@@ -12,7 +12,7 @@ class GemLoginApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false, // closes debug banner
 
-      title: 'Shineora Gems & jewellery (Pvt)Ltd.',
+      title: 'Shineora Gems & Jewellery (Pvt)Ltd.',
       theme: ThemeData(primarySwatch: Colors.teal, fontFamily: 'Arial'),
       home: const LoginPage(),
     );
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                   Center(child: Image.asset('images/Logo.jpg', height: 180)),
                   const SizedBox(height: 10),
                   const Text(
-                    "Shineora Gems & jewellery (Pvt)Ltd.",
+                    "Shineora Gems & Jewellery (Pvt)Ltd.",
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 30),
@@ -96,17 +96,25 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 25),
+
                   SizedBox(
                     width: double.infinity,
-                    height: 45,
+                    height: 40,
+
                     child: ElevatedButton(
                       onPressed: login,
+                      style: ElevatedButton.styleFrom(
+                        side: const BorderSide(
+                          color: Colors.black, // Black border
+                          width: 1, // Thickness of the line
+                        ),
+                      ),
+
                       child: const Text(
                         "LOGIN",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          backgroundColor: Color.fromARGB(0, 6, 213, 236),
                         ),
                       ),
                     ),
