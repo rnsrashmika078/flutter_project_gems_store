@@ -125,6 +125,20 @@ class GemCard extends StatelessWidget {
                         ),
                     ],
                   ),
+                   Row(
+                    children: [
+                      const Icon(Icons.location_on, size: 16, color: Colors.red),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          location,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
                 ],
               ),
             ),
