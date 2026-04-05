@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/main.dart';
 import 'package:superbase_auth/provider/global_provider.dart';
+import 'package:superbase_auth/screens/marketplace_screen.dart';
+import 'package:superbase_auth/screens/sign_in_screen.dart';
 import 'package:superbase_auth/services/supabase_auth.dart';
 import 'package:superbase_auth/validator/form_validator.dart';
 import 'package:superbase_auth/widgets/button_widget.dart';
@@ -43,7 +45,10 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
         return;
       }
 
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MarketplaceScreen()),
+      );
     }
   }
 
@@ -100,10 +105,12 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
                   if (!context.mounted) {
                     return;
                   }
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => UserProfile()),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MarketplaceScreen(),
+                    ),
+                  );
                 } else {
                   await supabase.auth.signInWithOAuth(OAuthProvider.google);
                 }
@@ -118,12 +125,20 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
                   "Don't have an account?",
                   style: TextStyle(color: Colors.grey, fontSize: 16),
                 ),
-                Text(
-                  "Sign in",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignInScreen()),
+                    );
+                  },
+                  child: Text(
+                    "Sign in",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ],

@@ -11,9 +11,8 @@ class HomeScreen extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SignUpScreen(),
-        Text(authUserData?['name'] ?? "Not Signed in!"),
-        ElevatedButton(onPressed: signOut, child: Icon(Icons.logout)),
+        Expanded(child: SignUpScreen()),
+        // ElevatedButton(onPressed: signOut, child: Icon(Icons.logout)),
       ],
     );
   }
