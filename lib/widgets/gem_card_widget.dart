@@ -134,6 +134,7 @@ class GemCard extends StatelessWidget {
                           location,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          
                         ),
                       ),
                     ],
