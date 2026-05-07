@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/models/gem.dart';
 import 'package:superbase_auth/services/supabase_services.dart';
+import 'package:superbase_auth/widgets/custom_app_bar.dart';
+import 'package:superbase_auth/widgets/custom_drawer.dart';
 import 'package:superbase_auth/widgets/gem_card_widget.dart';
 
 class MarketplaceScreen extends StatefulWidget {
@@ -21,6 +24,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     super.initState();
     loadGems();
   }
+
+  // final id = Supabase.instance.client.auth.currentUser?.id;
 
   Future<void> loadGems() async {
     final result = await getGemListing();
@@ -48,10 +53,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   void showGemDialog({Gem? existing}) {
     final nameController = TextEditingController(text: existing?.name ?? '');
     final typeController = TextEditingController(text: existing?.type ?? '');
-    final priceController =
-        TextEditingController(text: existing?.price.toString() ?? '');
-    final locationController =
-        TextEditingController(text: existing?.location ?? '');
+    final priceController = TextEditingController(
+      text: existing?.price.toString() ?? '',
+    );
+    final locationController = TextEditingController(
+      text: existing?.location ?? '',
+    );
     final ownerController = TextEditingController(text: existing?.owner ?? '');
 
     Uint8List? selectedImageBytes;
@@ -64,8 +71,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             Future<void> pickImage() async {
-              final picked =
-                  await picker.pickImage(source: ImageSource.gallery);
+              final picked = await picker.pickImage(
+                source: ImageSource.gallery,
+              );
               if (picked != null) {
                 final bytes = await picked.readAsBytes();
                 setStateDialog(() {
@@ -93,13 +101,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 fit: BoxFit.cover,
                               )
                             : (isEditing && existing.imagePath.isNotEmpty)
-                                ? Image.network(
-                                    existing.imagePath,
-                                    height: 120,
-                                    width: 120,
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Icon(Icons.add_a_photo),
+                            ? Image.network(
+                                existing.imagePath,
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                              )
+                            : const Icon(Icons.add_a_photo),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -139,7 +147,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                     if (selectedImageBytes != null) {
                       imagePath =
                           await uploadImageToSupabase(selectedImageBytes!) ??
-                              imagePath;
+                          imagePath;
                     }
 
                     final gem = Gem(
@@ -174,38 +182,44 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("All in one place for Gems in Srilanka",style: TextStyle( fontStyle: FontStyle.italic),)),
+      // appBar: AppBar(
+      //   title: const Text(
+      //     "All in one place for Gems in Srilanka",
+      //     style: TextStyle(fontStyle: FontStyle.italic),
+      //   ),
+      // ),\
+      appBar: CustomAppBar(title: "GEM LK"),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : gems.isEmpty
-              ? const Center(child: Text("No gems added yet"))
-              : GridView.builder(
-                  padding: const EdgeInsets.all(8),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: (MediaQuery.of(context).size.width / 200)
-                        .floor()
-                        .clamp(2, 6),
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 0.65,
-                  ),
-                  itemCount: gems.length,
-                  itemBuilder: (context, index) {
-                    final gemItem = gems[index];
-                    return GemCard(
-                      name: gemItem.name,
-                      type: gemItem.type,
-                      imageUrl: gemItem.imagePath.isNotEmpty
-                          ? gemItem.imagePath
-                          : "assets/images/first.png",
-                      owner: gemItem.owner,
-                      price: gemItem.price,
-                      location: gemItem.location,
-                      onEdit: () => showGemDialog(existing: gemItem),
-                      onDelete: () => removeGem(gemItem.id),
-                    );
-                  },
-                ),
+          ? const Center(child: Text("No gems added yet"))
+          : GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: (MediaQuery.of(context).size.width / 200)
+                    .floor()
+                    .clamp(2, 6),
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 0.65,
+              ),
+              itemCount: gems.length,
+              itemBuilder: (context, index) {
+                final gemItem = gems[index];
+                return GemCard(
+                  name: gemItem.name,
+                  type: gemItem.type,
+                  imageUrl: gemItem.imagePath.isNotEmpty
+                      ? gemItem.imagePath
+                      : "assets/images/first.png",
+                  owner: gemItem.owner,
+                  price: gemItem.price,
+                  location: gemItem.location,
+                  onEdit: () => showGemDialog(existing: gemItem),
+                  onDelete: () => removeGem(gemItem.id),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showGemDialog(),
         child: const Icon(Icons.add),

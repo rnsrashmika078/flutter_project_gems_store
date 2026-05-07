@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:superbase_auth/provider/global_provider.dart';
+import 'package:superbase_auth/screens/home_screen.dart';
+import 'package:superbase_auth/screens/sign_in_screen.dart';
 import 'package:superbase_auth/screens/user_profile.dart';
 import 'package:superbase_auth/services/supabase_auth.dart';
 
@@ -68,7 +70,12 @@ class _CustomDrawer extends ConsumerState<CustomDrawer> {
               onTap: () async {
                 await signOut();
                 if (!context.mounted) return;
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignInScreen(),
+                  ),
+                );
                 ref.read(authUserProvider.notifier).state = null;
               },
             ),
