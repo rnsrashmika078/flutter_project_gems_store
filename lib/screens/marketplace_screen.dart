@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/models/gem.dart';
 import 'package:superbase_auth/services/supabase_services.dart';
 import 'package:superbase_auth/widgets/custom_app_bar.dart';
-import 'package:superbase_auth/widgets/custom_drawer.dart';
+//import 'package:superbase_auth/widgets/custom_drawer.dart';
 import 'package:superbase_auth/widgets/gem_card_widget.dart';
 
 class MarketplaceScreen extends StatefulWidget {
@@ -188,7 +188,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       //     style: TextStyle(fontStyle: FontStyle.italic),
       //   ),
       // ),\
-      appBar: CustomAppBar(title: "GEM LK"),
+      appBar: CustomAppBar(title: "Shineora Gems & Jewellery (Pvt)Ltd."),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : gems.isEmpty

@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/main.dart';
 import 'package:superbase_auth/provider/global_provider.dart';
+import 'package:superbase_auth/screens/marketplace_screen.dart';
+import 'package:superbase_auth/screens/sign_in_screen.dart';
 import 'package:superbase_auth/services/supabase_auth.dart';
 import 'package:superbase_auth/validator/form_validator.dart';
 import 'package:superbase_auth/widgets/button_widget.dart';
@@ -16,35 +18,70 @@ class SignUpForm extends ConsumerStatefulWidget {
   const SignUpForm({super.key});
 
   @override
-  ConsumerState<SignUpForm> createState() => _SignUpForm();
+  ConsumerState<SignUpForm> createState() => _SignUpFormState();
 }
 
-class _SignUpForm extends ConsumerState<SignUpForm> {
+class _SignUpFormState extends ConsumerState<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final username = TextEditingController();
-  final email = TextEditingController();
-  final password = TextEditingController();
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  void submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      ref.read(userNameProvider.notifier).state = username.text;
+  bool _isLoading = false;
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Update providers with actual values (not controllers)
+      ref.read(userNameProvider.notifier).state = usernameController.text.trim();
+
       ref.read(authUserProvider.notifier).state = {
-        'username': username,
-        'email': email,
+        'username': usernameController.text.trim(),
+        'email': emailController.text.trim(),
       };
-      await emailSignUp(email.text.trim(), password.text.trim());
-      // await insertData(user_id, email.text.trim(), username.text.trim(), null);
+
+      await emailSignUp(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
       Fluttertoast.showToast(
-        msg: "Registration Success!",
+        msg: "Registration Successful!",
         gravity: ToastGravity.BOTTOM,
       );
-      if (!context.mounted || !mounted) {
-        return;
-      }
 
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
+      // Navigate to Marketplace after successful signup
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MarketplaceScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      Fluttertoast.showToast(
+        msg: "Registration failed: $e",
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_LONG,
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,78 +89,99 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
     return Form(
       key: _formKey,
       child: Padding(
-        padding: EdgeInsetsGeometry.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          spacing: 14,
           children: [
             CustomTextField(
-              controller: username,
+              controller: usernameController,
               labelText: 'Name',
               hintText: 'Enter username',
-              prefixIcon: Icons.email_outlined,
-              suffixIcon: Icons.check_circle_outline,
-              validator: FormValidator.username,
+              prefixIcon: Icons.person_outline, // Better icon
+            validator: FormValidator.username, obscureText:false  ,
             ),
+            const SizedBox(height: 14),
             CustomTextField(
-              controller: email,
+              controller: emailController,
               labelText: 'Email',
-              hintText: 'Enter Your Email Address',
+              hintText: 'Enter your email address',
               prefixIcon: Icons.email_outlined,
-              suffixIcon: Icons.check_circle_outline,
-              validator: FormValidator.email,
+              validator: FormValidator.email, obscureText: false,
             ),
+            const SizedBox(height: 14),
             CustomTextField(
-              controller: password,
+              controller: passwordController,
               labelText: 'Password',
               hintText: 'Enter your password',
-              prefixIcon: Icons.lock,
-              suffixIcon: Icons.check_circle_outline,
+              prefixIcon: Icons.lock_outline,
+              obscureText: true, // Added for security
               validator: FormValidator.password,
             ),
+            const SizedBox(height: 24),
+
             CustomButton(
               backgroundColor: Colors.blue,
-              iconSize: 25,
               textColor: Colors.white,
-              buttonText: "Create Account",
-              onPressed: submitForm,
+              buttonText: _isLoading ? "Creating Account..." : "Create Account",
+              onPressed: _isLoading ? null : _submitForm,
             ),
-            Text("OR", style: TextStyle(color: Colors.grey, fontSize: 16)),
-            // sign in with google
+
+            const SizedBox(height: 16),
+            const Text("OR", style: TextStyle(color: Colors.grey, fontSize: 16)),
+            const SizedBox(height: 16),
+
+            // Google Sign In
             CustomButton(
               backgroundColor: Colors.black,
-              iconSize: 25,
               textColor: Colors.white,
-              buttonText: "Sign in with Google",
+              buttonText: "Continue with Google",
               onPressed: () async {
-                if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-                  await nativeGoogleSignIn();
-                  if (!context.mounted) {
-                    return;
+                try {
+                  if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+                    await nativeGoogleSignIn();
+                  } else {
+                    await supabase.auth.signInWithOAuth(OAuthProvider.google);
                   }
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => UserProfile()),
-                  // );
-                } else {
-                  await supabase.auth.signInWithOAuth(OAuthProvider.google);
+
+                  if (!mounted) return;
+
+                  Navigator.pushReplacement(
+                    // ignore: use_build_context_synchronously
+                    context,
+                    MaterialPageRoute(builder: (_) => const MarketplaceScreen()),
+                  );
+                } catch (e) {
+                  Fluttertoast.showToast(
+                    msg: "Google sign-in failed",
+                    backgroundColor: Colors.red,
+                  );
                 }
               },
-              buttonIcon: ("assets/images/google_2.png"),
+              buttonIcon: "assets/images/google_2.png",
             ),
+
+            const SizedBox(height: 24),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 5,
               children: [
-                Text(
-                  "Don't have an account?",
+                const Text(
+                  "Already have an account? ",
                   style: TextStyle(color: Colors.grey, fontSize: 16),
                 ),
-                Text(
-                  "Sign in",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SignInScreen()),
+                    );
+                  },
+                  child: const Text(
+                    "Sign in",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ],

@@ -2,7 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/main.dart';
 import 'dart:typed_data';
-import 'package:supabase_flutter/supabase_flutter.dart';
+//import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:superbase_auth/models/gem.dart';
 
 Future<void> insertData(
@@ -55,7 +55,7 @@ Future<String?> uploadImageToSupabase(Uint8List imageBytes) async {
 
     return publicUrl;
   } catch (e) {
-    print("Upload error: $e");
+    //print("Upload error: $e");
     return null;
   }
 }

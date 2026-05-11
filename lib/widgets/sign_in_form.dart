@@ -1,5 +1,5 @@
-// sign_in_form.dart
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,39 +17,59 @@ class SignInForm extends ConsumerStatefulWidget {
   const SignInForm({super.key});
 
   @override
-  ConsumerState<SignInForm> createState() => _SignInForm();
+  ConsumerState<SignInForm> createState() => _SignInFormState();
 }
 
-class _SignInForm extends ConsumerState<SignInForm> {
+class _SignInFormState extends ConsumerState<SignInForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final email = TextEditingController();
-  final password = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  void submitForm() async {
+  bool _isLoading = false;
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
     try {
-      if (_formKey.currentState!.validate()) {
-        await emailSignIn(email.text.trim(), password.text.trim());
+      await emailSignIn(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
 
-        Fluttertoast.showToast(
-          msg: "Login Success!",
-          gravity: ToastGravity.BOTTOM,
-        );
+      if (!mounted) return;
 
-        if (!context.mounted || !mounted) return;
+      Fluttertoast.showToast(
+        msg: "Login Successful!",
+        gravity: ToastGravity.BOTTOM,
+      );
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MarketplaceScreen()),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MarketplaceScreen()),
+      );
     } catch (e) {
+      if (!mounted) return;
+
       Fluttertoast.showToast(
         msg: e.toString(),
         gravity: ToastGravity.BOTTOM,
         toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
       );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -57,65 +77,87 @@ class _SignInForm extends ConsumerState<SignInForm> {
     return Form(
       key: _formKey,
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          spacing: 14,
           children: [
             CustomTextField(
-              controller: email,
+              controller: emailController,
               labelText: 'Email',
-              hintText: 'Enter Your Email Address',
+              hintText: 'Enter your email address',
               prefixIcon: Icons.email_outlined,
-              suffixIcon: Icons.check_circle_outline,
-              validator: FormValidator.email,
+              validator: FormValidator.email, obscureText: false,
             ),
+            const SizedBox(height: 14),
             CustomTextField(
-              controller: password,
+              controller: passwordController,
               labelText: 'Password',
               hintText: 'Enter your password',
-              prefixIcon: Icons.lock,
-              suffixIcon: Icons.check_circle_outline,
+              prefixIcon: Icons.lock_outline,
+              obscureText: true, // Added for better UX
               validator: FormValidator.password,
             ),
+            const SizedBox(height: 24),
+
             CustomButton(
               backgroundColor: Colors.blue,
-              iconSize: 25,
               textColor: Colors.white,
-              buttonText: "Sign In",
-              onPressed: submitForm,
+              buttonText: _isLoading ? "Signing In..." : "Sign In",
+              onPressed: _isLoading ? null : _submitForm,
             ),
-            Text("OR", style: TextStyle(color: Colors.grey, fontSize: 16)),
-            // Sign in with Google
+
+            const SizedBox(height: 16),
+            const Text(
+              "OR",
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+
+            // Google Sign In
             CustomButton(
               backgroundColor: Colors.black,
-              iconSize: 25,
               textColor: Colors.white,
-              buttonText: "Sign in with Google",
+              buttonText: "Continue with Google",
               onPressed: () async {
-                if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
-                  await nativeGoogleSignIn();
-                } else {
-                  await supabase.auth.signInWithOAuth(OAuthProvider.google);
+                try {
+                  if (!kIsWeb && (Platform.isIOS || Platform.isAndroid)) {
+                    await nativeGoogleSignIn();
+                  } else {
+                    await supabase.auth.signInWithOAuth(OAuthProvider.google);
+                  }
+
+                  if (!mounted) return;
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MarketplaceScreen()),
+                  );
+                } catch (e) {
+                  Fluttertoast.showToast(
+                    msg: "Google sign in failed",
+                    backgroundColor: Colors.red,
+                  );
                 }
               },
               buttonIcon: "assets/images/google_2.png",
             ),
+
+            const SizedBox(height: 24),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 5,
               children: [
-                Text(
-                  "Don't have an account?",
+                const Text(
+                  "Don't have an account? ",
                   style: TextStyle(color: Colors.grey, fontSize: 16),
                 ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignUpScreen()),
+                      MaterialPageRoute(builder: (_) => const SignUpScreen()),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "Sign Up",
                     style: TextStyle(
                       color: Colors.blue,

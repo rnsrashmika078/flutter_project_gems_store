@@ -19,7 +19,7 @@ class CustomTextField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
-    this.controller,
+    this.controller, required bool obscureText,
   });
   @override
   State<CustomTextField> createState() => _CustomTextField();

@@ -68,6 +68,7 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
               prefixIcon: Icons.email_outlined,
               suffixIcon: Icons.check_circle_outline,
               validator: FormValidator.username,
+              obscureText: false,
             ),
             CustomTextField(
               controller: email,
@@ -76,6 +77,7 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
               prefixIcon: Icons.email_outlined,
               suffixIcon: Icons.check_circle_outline,
               validator: FormValidator.email,
+              obscureText: false,
             ),
             CustomTextField(
               controller: password,
@@ -84,6 +86,7 @@ class _SignUpForm extends ConsumerState<SignUpForm> {
               prefixIcon: Icons.lock,
               suffixIcon: Icons.check_circle_outline,
               validator: FormValidator.password,
+              obscureText: false,
             ),
             CustomButton(
               backgroundColor: Colors.blue,
